@@ -11,6 +11,7 @@ public abstract class MultiObjectiveSolution<I extends Instance> extends Solutio
 
 	protected int numObjectives = 1;
 	protected double[] objectiveValues;
+	protected boolean minimize = true;
 	
 	/**
 	 * It is required to specify the number of objectives.
@@ -38,5 +39,45 @@ public abstract class MultiObjectiveSolution<I extends Instance> extends Solutio
 	 */
 	public double getObjective(int objectiveNumber) {
 		return this.objectiveValues[objectiveNumber];
+	}
+	
+	
+	/**
+	 * Comparation based on dominance: lower is better (minimizing)
+	 */
+	public int dominanceCompareTo(MultiObjectiveSolution<I> s2) {
+		MultiObjectiveSolution<I> s1 = this;
+		if (s2 == null) {
+			return -1;
+		}
+		int n = Math.min(s1.numObjectives, s2.numObjectives);
+
+		boolean bigger = false;
+		boolean smaller = false;
+		boolean indiff = false;
+		for (int i = 0; !(indiff) && i < n; i++) {
+			if (s1.getObjective(i) > s2.getObjective(i)) {
+				bigger = true;
+			}
+			if (s1.getObjective(i) < s2.getObjective(i)) {
+				smaller = true;
+			}
+			indiff = (bigger && smaller);
+		}
+
+		if (smaller && !bigger) {
+			if (minimize) {
+				return -1;
+			} else {
+				return 1;
+			}
+		} else if (bigger && !smaller) {
+			if (minimize) {
+				return 1;
+			} else {
+				return -1;
+			}
+		}
+		return 0;
 	}
 }
