@@ -80,4 +80,18 @@ public abstract class MultiObjectiveSolution<I extends Instance> extends Solutio
 		}
 		return 0;
 	}
+	
+	
+	@Override
+	public boolean isBetterThan(Solution<I> aSolution) {
+		if (aSolution instanceof MultiObjectiveSolution) {
+			MultiObjectiveSolution<I> aSol = (MultiObjectiveSolution<I>) aSolution;
+			// Uses the dominance comparison.
+			return (this.dominanceCompareTo(aSol) == -1);
+
+		} else {
+			System.err.println("Trying to compare dominance between a bi-objective solution with a single-objective solution");
+			return false;
+		}
+	}
 }
